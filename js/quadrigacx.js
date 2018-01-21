@@ -70,6 +70,15 @@ module.exports = class quadrigacx extends Exchange {
         });
     }
 
+		nonce () {
+			if (typeof this.the_nonce === "undefined") {
+				this.the_nonce = this.seconds()	;
+			} else {
+				this.the_nonce++;
+			}
+      return this.the_nonce;
+    }
+
     async fetchBalance (params = {}) {
         let balances = await this.privatePostBalance ();
         let result = { 'info': balances };
