@@ -215,6 +215,15 @@ module.exports = class bitfinex extends Exchange {
         });
     }
 
+		nonce () {
+			if (typeof this.the_nonce === "undefined") {
+				this.the_nonce = this.seconds()	;
+			} else {
+				this.the_nonce++;
+			}
+      return this.the_nonce;
+    }
+
     commonCurrencyCode (currency) {
         const currencies = {
             'DSH': 'DASH', // Bitfinex names Dash as DSH, instead of DASH
