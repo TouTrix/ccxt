@@ -4,6 +4,7 @@
 
 const Exchange = require ('./base/Exchange');
 const { ExchangeError } = require ('./base/errors');
+const fs = require('fs');
 
 //  ---------------------------------------------------------------------------
 
@@ -72,10 +73,22 @@ module.exports = class quadrigacx extends Exchange {
 
 		nonce () {
 			if (typeof this.the_nonce === "undefined") {
-				this.the_nonce = this.seconds()	;
+				// Check if there is a file with the last nonce so we can reuse it
+				var fs = require('fs');
+				if (fs.existsSync('./quadrigacx.json')) {
+					var parsedJSON = require('./quadrigacx.json');
+					this.the_nonce = parsedJSON.nonce;
+				} else {
+					this.the_nonce = this.seconds()	;
+				}
 			} else {
 				this.the_nonce++;
 			}
+			fs.writeFile("./quadrigacx.json", JSON.stringify({nonce:this.the_nonce}), function(err) {
+				if(err) {
+				    return console.log(err);
+				}
+			});
       return this.the_nonce;
     }
 

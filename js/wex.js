@@ -77,6 +77,27 @@ module.exports = class wex extends liqui {
         });
     }
 
+		nonce () {
+			if (typeof this.the_nonce === "undefined") {
+				// Check if there is a file with the last nonce so we can reuse it
+				var fs = require('fs');
+				if (fs.existsSync('./wex.json')) {
+					var parsedJSON = require('./wex.json');
+					this.the_nonce = parsedJSON.nonce;
+				} else {
+					this.the_nonce = this.seconds()	;
+				}
+			} else {
+				this.the_nonce++;
+			}
+			fs.writeFile("./wex.json", JSON.stringify({nonce:this.the_nonce}), function(err) {
+				if(err) {
+				    return console.log(err);
+				}
+			});
+      return this.the_nonce;
+    }
+
     parseTicker (ticker, market = undefined) {
         let timestamp = ticker['updated'] * 1000;
         let symbol = undefined;
